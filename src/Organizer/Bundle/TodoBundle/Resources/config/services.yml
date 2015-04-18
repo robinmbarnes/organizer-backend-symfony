@@ -1,0 +1,8 @@
+services:
+    organizer.todo.service.json_serializer:
+        class: Organizer\Bundle\TodoBundle\Service\JsonSerializer
+        arguments:
+          - @jms_serializer
+
+    organizer.todo.service.serializer:
+      alias: organizer.todo.service.json_serializer

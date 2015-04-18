@@ -1,0 +1,4 @@
+organizer_todo:
+    resource: "@OrganizerTodoBundle/Controller/TodoController.php"
+    type:     annotation
+    prefix:   /api

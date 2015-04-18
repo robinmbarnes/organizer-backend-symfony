@@ -1,0 +1,3 @@
+organizer_rest_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: OrganizerRestBundle:Default:index }
