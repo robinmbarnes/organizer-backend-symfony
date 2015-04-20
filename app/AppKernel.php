@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Organizer\Bundle\TodoBundle\OrganizerTodoBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle($this),
             new Organizer\Bundle\RestBundle\OrganizerRestBundle(),
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
