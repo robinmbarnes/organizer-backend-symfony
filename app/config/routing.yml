@@ -1,3 +1,8 @@
+organizer_calendar:
+    resource: "@OrganizerCalendarBundle/Controller/EventController.php"
+    type:     annotation
+    prefix:   /api
+
 organizer_todo:
     resource: "@OrganizerTodoBundle/Controller/TodoController.php"
     type:     annotation
