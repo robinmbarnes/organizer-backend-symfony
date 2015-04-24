@@ -34,7 +34,6 @@ class EventController extends Controller
         return $this->container->get('organizer.todo.service.serializer');
     }
 
-
     /**
      * @Route("/")
      * @Method("GET")
@@ -43,8 +42,100 @@ class EventController extends Controller
     {
         $events =
             $this->getRepository()
-            ->findBy([], ['startDate' => 'ASC', 'startTime' => 'ASC']);
+            ->findBy([], ['startDate' => 'ASC']);
 
         return new JsonResponse($this->getSerializer()->serialize($events));
     }
+
+    /**
+     * @Route("/{eventId}", requirements={"eventId" = "\d+"})
+     * @Method("GET")
+     */
+    public function getAction($eventId)
+    {
+        $event = $this->getRepository()->find($eventId);
+        if(!$event) {
+            return new Response('', 404);
+        }
+
+        return new JsonResponse($this->getSerializer()->serialize($event));
+    }
+
+    /**
+     * @Route("/")
+     * @Method("POST")
+     */
+    public function postAction(Request $request)
+    {
+        $event = $this->getSerializer()->deserialize(
+            $request->getContent(),
+            'Organizer\Bundle\CalendarBundle\Entity\Event'
+        );
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($event);
+
+        try {
+            $em->flush();
+        } catch(\Exception $e) {
+            return new Response('Could not create event: '.$e->getMessage(), 500);
+        }
+
+        return new JsonResponse($this->getSerializer()->serialize($event));
+    }
+
+    /**
+     * @Route("/{eventId}", requirements={"eventId" = "\d+"})
+     * @Method("PUT")
+     */
+    public function putAction(Request $request, $eventId)
+    {
+        $event = $this->getRepository()->find($eventId);
+        if(!$eventId) {
+            return new Response('', 404);
+        }
+
+        $updatedEvent = $this->getSerializer()->deserialize(
+            $request->getContent(),
+            'Organizer\Bundle\CalendarBundle\Entity\Event'
+        );
+
+        $event->setTitle($updatedEvent->getTitle());
+        $event->setIsAllDay($updatedEvent->getIsAllDay());
+        $event->setStartDate($updatedEvent->getStartDate());
+        $event->setEndDate($updatedEvent->getEndDate());
+
+        $em = $this->getDoctrine()->getManager();
+        try {
+            $em->flush();
+        } catch(\Exception $e) {
+            return new Response('Could not update event', 500);
+        }
+
+        return new JsonResponse($this->getSerializer()->serialize($event));
+    }
+
+    /**
+     * @Route("/{eventId}", requirements={"eventId" = "\d+"})
+     * @Method("DELETE")
+     */
+    public function deleteAction($eventId)
+    {
+        $event = $this->getRepository()->find($eventId);
+        if(!$event) {
+            return new Response('', 404);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($event);
+
+        try {
+            $em->flush();
+        } catch(\Exception $e) {
+            return new Response('Could not remove event', 500);
+        }
+
+        return new Response('', 200);
+    }
+
 }

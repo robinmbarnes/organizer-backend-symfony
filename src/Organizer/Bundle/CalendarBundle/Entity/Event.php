@@ -35,30 +35,16 @@ class Event
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="start_date", type="date")
+     * @ORM\Column(name="start_date", type="datetime")
      */
     private $startDate;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="start_time", type="time")
-     */
-    private $startTime;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="end_date", type="date")
+     * @ORM\Column(name="end_date", type="datetime")
      */
     private $endDate;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="end_time", type="time")
-     */
-    private $endTime;
 
     /**
      * @var boolean
@@ -125,29 +111,6 @@ class Event
     }
 
     /**
-     * Set startTime
-     *
-     * @param \DateTime $startTime
-     * @return Event
-     */
-    public function setStartTime(\DateTime $startTime)
-    {
-        $this->startTime = $startTime;
-
-        return $this;
-    }
-
-    /**
-     * Get startTime
-     *
-     * @return \DateTime 
-     */
-    public function getStartTime()
-    {
-        return $this->startTime;
-    }
-
-    /**
      * Set endDate
      *
      * @param \DateTime $endDate
@@ -168,29 +131,6 @@ class Event
     public function getEndDate()
     {
         return $this->endDate;
-    }
-
-    /**
-     * Set endTime
-     *
-     * @param \DateTime $endTime
-     * @return Event
-     */
-    public function setEndTime(\DateTime $endTime)
-    {
-        $this->endTime = $endTime;
-
-        return $this;
-    }
-
-    /**
-     * Get endTime
-     *
-     * @return \DateTime 
-     */
-    public function getEndTime()
-    {
-        return $this->endTime;
     }
 
     /**
