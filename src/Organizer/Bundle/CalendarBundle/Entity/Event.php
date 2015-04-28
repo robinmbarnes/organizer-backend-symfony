@@ -5,6 +5,8 @@ namespace Organizer\Bundle\CalendarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Todo
@@ -29,6 +31,7 @@ class Event
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=200)
+     * @Assert\NotBlank()
      */
     private $title;
 
@@ -36,6 +39,7 @@ class Event
      * @var \DateTime
      *
      * @ORM\Column(name="start_date", type="datetime")
+     * @Assert\DateTime
      */
     private $startDate;
 
@@ -43,6 +47,7 @@ class Event
      * @var \DateTime
      *
      * @ORM\Column(name="end_date", type="datetime")
+     * @Assert\DateTime
      */
     private $endDate;
 
@@ -50,9 +55,9 @@ class Event
      * @var boolean
      *
      * @ORM\Column(name="is_all_day", type="boolean")
+     * @Assert\Type(type="bool")
      */
     private $isAllDay;
-
 
     /**
      * Get id
@@ -154,5 +159,21 @@ class Event
     public function getIsAllDay()
     {
         return $this->isAllDay;
+    }
+
+    /**
+     * @param ExecutionContextInterface $context
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if($this->getStartDate()->getTimestamp() > $this->getEndDate()->getTimestamp()) {
+            $context->buildViolation('The start date cannot be less than the end date')
+                ->atPath('startDate')
+                ->addViolation();
+            $context->buildViolation('The start date cannot be less than the end date')
+                ->atPath('endDate')
+                ->addViolation();
+        }
     }
 }

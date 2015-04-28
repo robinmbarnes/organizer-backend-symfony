@@ -2,6 +2,7 @@
 
 namespace Organizer\Bundle\CalendarBundle\Controller;
 
+use Organizer\Bundle\CalendarBundle\Entity\Event;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -72,6 +73,11 @@ class EventController extends Controller
             'Organizer\Bundle\CalendarBundle\Entity\Event'
         );
 
+        $errors = $this->validateEvent($event);
+        if($errors !== null) {
+            return new JsonResponse(json_encode($errors), 400);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($event);
 
@@ -99,6 +105,11 @@ class EventController extends Controller
             $request->getContent(),
             'Organizer\Bundle\CalendarBundle\Entity\Event'
         );
+
+        $errors = $this->validateEvent($updatedEvent);
+        if($errors !== null) {
+            return new JsonResponse(json_encode($errors), 400);
+        }
 
         $event->setTitle($updatedEvent->getTitle());
         $event->setIsAllDay($updatedEvent->getIsAllDay());
@@ -136,6 +147,26 @@ class EventController extends Controller
         }
 
         return new Response('', 200);
+    }
+
+    /**
+     * @param Event $event
+     * @return array|null
+     */
+    private function validateEvent(Event $event)
+    {
+        $validator = $this->get('validator');
+        $violationList = $validator->validate($event);
+
+        if($violationList->count()) {
+            $errors = ['errors' => []];
+            foreach($violationList->getIterator() as $violation) {
+                $errors['errors'][$violation->getPropertyPath()] = $violation->getMessage();
+            }
+            return $errors;
+        }
+
+        return null;
     }
 
 }
